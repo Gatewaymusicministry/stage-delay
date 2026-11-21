@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Rane AD 22d Stage Delay &amp; Monitor Reflection Calculator</title>
+<style>
+  :root {
+    --bg-main: #0b0e14;
+    --bg-card: #131822;
+    --bg-panel: #1a2130;
+    --bg-input: #0e121a;
+    --border: #283347;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-cyan: #06b6d4;
+    --accent-cyan-glow: rgba(6, 182, 212, 0.25);
+    --accent-amber: #f59e0b;
+    --accent-emerald: #10b981;
+    --accent-rose: #f43f5e;
+    --accent-indigo: #6366f1;
+    --accent-violet: #a855f7;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    line-height: 1.45;
+    padding: 16px;
+    padding-bottom: 56px;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    color: #fff;
+    box-shadow: 0 0 16px var(--accent-cyan-glow);
+  }
+
+  .brand h1 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  .brand span {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .toggle-pill {
+    display: inline-flex;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .toggle-pill button {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .toggle-pill button.active {
+    background: var(--accent-cyan);
+    color: #06131a;
+  }
+
+  /* Environment Bar */
+  .env-bar {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+    align-items: center;
+  }
+
+  @media (max-width: 580px) {
+    .env-bar {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .temp-control label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .temp-control label strong {
+    color: var(--accent-cyan);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.9rem;
+  }
+
+  input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent-cyan);
+    height: 6px;
+    background: var(--bg-input);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .speed-stat {
+    background: var(--bg-panel);
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    text-align: right;
+  }
+
+  .speed-stat span {
+    display: block;
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.6px;
+  }
+
+  .speed-stat strong {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+  }
+
+  /* Rane AD 22d Hardware Readout Card */
+  .rane-card {
+    background: linear-gradient(180deg, #161e2e 0%, #0f141e 100%);
+    border: 2px solid var(--accent-cyan);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 18px;
+    box-shadow: 0 0 24px rgba(6, 182, 212, 0.12);
+  }
+
+  .rane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .rane-title {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--accent-cyan);
+    font-weight: 800;
+  }
+
+  .rane-sub {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+  }
+
+  .copy-btn {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .copy-btn:active {
+    transform: scale(0.97);
+  }
+
+  .channel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 580px) {
+    .channel-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .ch-box {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .ch-box.active-delay {
+    border-color: var(--accent-cyan);
+    background: rgba(6, 182, 212, 0.06);
+  }
+
+  .ch-box.bypass-box {
+    border-color: rgba(16, 185, 129, 0.45);
+  }
+
+  .ch-box.fill-box {
+    border-color: var(--accent-amber);
+    background: rgba(245, 158, 11, 0.06);
+  }
+
+  .ch-box.monitor-box {
+    grid-column: 1 / -1;
+    border-color: var(--accent-violet);
+    background: rgba(168, 85, 247, 0.07);
+  }
+
+  .ch-tag {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+
+  .ch-box.active-delay .ch-tag {
+    color: var(--accent-cyan);
+  }
+
+  .ch-box.bypass-box .ch-tag {
+    color: var(--accent-emerald);
+  }
+
+  .ch-box.fill-box .ch-tag {
+    color: var(--accent-amber);
+  }
+
+  .ch-box.monitor-box .ch-tag {
+    color: var(--accent-violet);
+  }
+
+  .ch-readout {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+    margin: 4px 0;
+  }
+
+  .ch-box.bypass-box .ch-readout {
+    color: var(--accent-emerald);
+  }
+
+  .ch-box.fill-box .ch-readout {
+    color: var(--accent-amber);
+  }
+
+  .ch-box.monitor-box .ch-readout {
+    color: var(--accent-violet);
+    font-size: 1.65rem;
+  }
+
+  .ch-desc {
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+  }
+
+  .mon-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 8px 0;
+  }
+
+  @media (max-width: 580px) {
+    .mon-metrics {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .mon-stat {
+    background: rgba(15, 20, 30, 0.75);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+
+  .mon-stat span {
+    display: block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+
+  .mon-stat strong {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.95rem;
+    color: #f3e8ff;
+  }
+
+  /* Input Panels */
+  .panel-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+
+  .panel-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+
+  .panel-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .panel-hint {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+  }
+
+  .preset-pill-btn {
+    background: rgba(16, 185, 129, 0.14);
+    border: 1px solid rgba(16, 185, 129, 0.45);
+    color: var(--accent-emerald);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 580px) {
+    .input-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .field label {
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+
+  .input-wrap {
+    display: flex;
+    align-items: center;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 0 12px;
+  }
+
+  .input-wrap:focus-within {
+    border-color: var(--accent-cyan);
+  }
+
+  .input-wrap input, .input-wrap select {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 1.02rem;
+    font-weight: 600;
+    padding: 10px 0;
+    outline: none;
+  }
+
+  .input-wrap select option {
+    background: #0e121a;
+    color: #fff;
+  }
+
+  .input-wrap span {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-left: 8px;
+  }
+
+  .quick-btns {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+
+  .q-btn {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .q-btn:hover, .q-btn.active {
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+  }
+
+  /* Toggle Switch */
+  .fill-toggle-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 26px;
+    flex-shrink: 0;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border);
+    transition: .2s;
+    border-radius: 26px;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--text-secondary);
+    transition: .2s;
+    border-radius: 50%;
+  }
+
+  input:checked + .slider {
+    background-color: rgba(245, 158, 11, 0.25);
+    border-color: var(--accent-amber);
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(22px);
+    background-color: var(--accent-amber);
+  }
+
+  input.violet-switch:checked + .slider {
+    background-color: rgba(168, 85, 247, 0.25);
+    border-color: var(--accent-violet);
+  }
+
+  input.violet-switch:checked + .slider:before {
+    background-color: var(--accent-violet);
+  }
+
+  .fill-inputs {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  /* Collapsible Hardware Calibration */
+  details {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+  }
+
+  summary {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  summary:hover {
+    color: var(--text-primary);
+  }
+
+  details .input-grid {
+    margin-top: 12px;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 16px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="brand">
+      <div class="brand-icon">AD22</div>
+      <div>
+        <h1>Rane AD 22d Stage Setup</h1>
+        <span>S1 Pro/Pro+ &bull; ThumpSub GO &bull; Hisonic &bull; Monitor Bleed</span>
+      </div>
+    </div>
+    <div class="toggle-pill" id="unitToggle">
+      <button type="button" class="active" data-unit="ft">Feet</button>
+      <button type="button" data-unit="m">Meters</button>
+    </div>
+  </header>
+
+  <!-- Temperature -->
+  <section class="env-bar">
+    <div class="temp-control">
+      <label>
+        <span>Venue Air Temperature</span>
+        <strong id="tempDisplay">70°F (21.1°C)</strong>
+      </label>
+      <input type="range" id="tempSlider" min="40" max="110" value="70" step="1">
+    </div>
+    <div class="speed-stat">
+      <span>Speed of Sound</span>
+      <strong id="speedDisplay">1128.4 ft/s</strong>
+    </div>
+  </section>
+
+  <!-- RANE AD 22d DIAL SETTINGS -->
+  <section class="rane-card">
+    <div class="rane-header">
+      <div>
+        <div class="rane-title">Rane AD 22d Settings (S1 Mains Direct)</div>
+        <div class="rane-sub" id="summaryNote">Keep Bose S1 Pro / Pro+ mains direct (~2.30 ms); dial Rane Ch 1 &amp; Ch 2 below</div>
+      </div>
+      <button type="button" class="copy-btn" id="copyBtn">Copy Settings</button>
+    </div>
+
+    <div class="channel-grid">
+      <div class="ch-box" id="ch1Box">
+        <div class="ch-tag">Rane Channel 1 — Mackie ThumpSub GO</div>
+        <div class="ch-readout" id="ch1Val">0.00 ms</div>
+        <div class="ch-desc" id="ch1Desc">Setback absorbs DSP — Rane Bypass / 0.00 ms</div>
+      </div>
+
+      <div class="ch-box fill-box hidden" id="ch2Box">
+        <div class="ch-tag">Rane Channel 2 — Hisonic Center Fill</div>
+        <div class="ch-readout" id="ch2Val">0.53 ms</div>
+        <div class="ch-desc" id="ch2Desc">24" behind S1s — 0.53 ms Haas anchor (or Bypass)</div>
+      </div>
+
+      <div class="ch-box monitor-box hidden" id="monitorReadoutBox">
+        <div class="ch-tag">Stage Monitor (#2) Back-Wall Bleed Analysis</div>
+        <div class="mon-metrics">
+          <div class="mon-stat">
+            <span>Total Reflection Path</span>
+            <strong id="monPathOut">14.0 ft</strong>
+          </div>
+          <div class="mon-stat">
+            <span>Monitor Bleed Arrival</span>
+            <strong id="monArrivalOut">14.71 ms</strong>
+          </div>
+          <div class="mon-stat">
+            <span>Delay Behind S1 Mains</span>
+            <strong id="monOffsetOut">+12.41 ms</strong>
+          </div>
+        </div>
+        <div class="ch-desc" id="monAdviceOut">Calculating comb-filtering &amp; low-mid reinforcement impact...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 1: Setback Behind S1 Grille Plane -->
+  <section class="panel-card">
+    <div class="panel-header-row">
+      <div class="panel-title">1. Distance Behind Bose S1 Grille Plane (Setback)</div>
+      <button type="button" class="preset-pill-btn" id="organicPresetBtn">Load Organic 1 ft / 2 ft Preset</button>
+    </div>
+    <div class="panel-hint">Bose S1 Pro / Pro+ mains sit at <code>0 ft</code> (Front Reference Plane). Enter how far <strong>behind</strong> the S1 grille line each speaker sits (use negative numbers like <code>-2</code> if a speaker is forced in front of the S1s).</div>
+
+    <div class="input-grid">
+      <div class="field">
+        <label>Bose S1 Pro / Pro+ Mains (Reference Plane)</label>
+        <div class="input-wrap">
+          <input type="number" id="mainsSetbackInput" value="0" step="0.25">
+          <span class="unit-lbl">ft</span>
+        </div>
+        <div class="quick-btns">
+          <button type="button" class="q-btn" data-target="mainsSetbackInput" data-val="0">0 ft (Front Anchor)</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Mackie ThumpSub GO (Setback Behind S1s)</label>
+        <div class="input-wrap">
+          <input type="number" id="subSetbackInput" value="1" step="0.25">
+          <span class="unit-lbl">ft</span>
+        </div>
+        <div class="quick-btns">
+          <button type="button" class="q-btn" data-target="subSetbackInput" data-val="0">0 ft (Grilles Flush)</button>
+          <button type="button" class="q-btn" data-target="subSetbackInput" data-val="1">1.0 ft Behind S1s</button>
+          <button type="button" class="q-btn" data-target="subSetbackInput" data-val="2">2.0 ft Behind S1s</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 2: Optional Hisonic Center Fill Speaker -->
+  <section class="panel-card">
+    <div class="fill-toggle-bar">
+      <div>
+        <div class="panel-title" style="margin-bottom: 2px;">2. Using the Hisonic Center Fill Today?</div>
+        <div class="panel-hint" style="margin-bottom: 0;">Turn on when deploying the Hisonic center fill (on rear sub cradle or stage lip)</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="useFillToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="fill-inputs hidden" id="fillInputs">
+      <div class="field">
+        <label>Hisonic Center Fill Setback Behind S1 Grille Plane</label>
+        <div class="input-wrap">
+          <input type="number" id="fillSetbackInput" value="2" step="0.25">
+          <span class="unit-lbl">ft</span>
+        </div>
+        <div class="quick-btns">
+          <button type="button" class="q-btn" id="fillFlushBtn">0 ft (Flush w/ S1s)</button>
+          <button type="button" class="q-btn" id="fillRearCradleBtn">Rear Sub Cradle (+1 ft behind Sub)</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3: Stage Monitor Back-Wall Reflection / Bleed -->
+  <section class="panel-card">
+    <div class="fill-toggle-bar">
+      <div>
+        <div class="panel-title" style="margin-bottom: 2px;">3. Stage Monitor (#2) Back-Wall Bleed Check</div>
+        <div class="panel-hint" style="margin-bottom: 0;">Measure monitor bounce off rear wall into FOH to check comb-filtering &amp; low-mid warmth</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="useMonitorToggle" class="violet-switch">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="fill-inputs hidden" id="monitorInputs">
+      <div class="input-grid">
+        <div class="field">
+          <label>Monitor (#2) to Back Wall Distance</label>
+          <div class="input-wrap">
+            <input type="number" id="monToWallInput" value="4" min="0" step="0.5">
+            <span class="unit-lbl">ft</span>
+          </div>
+          <div class="quick-btns">
+            <button type="button" class="q-btn" data-target="monToWallInput" data-val="2">2 ft (Tight)</button>
+            <button type="button" class="q-btn" data-target="monToWallInput" data-val="5">5 ft</button>
+            <button type="button" class="q-btn" data-target="monToWallInput" data-val="10">10 ft (Deep Stage)</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Back Wall to S1 FOH Front Line</label>
+          <div class="input-wrap">
+            <input type="number" id="wallToFohInput" value="10" min="0" step="0.5">
+            <span class="unit-lbl">ft</span>
+          </div>
+          <div class="quick-btns">
+            <button type="button" class="q-btn" data-target="wallToFohInput" data-val="8">8 ft</button>
+            <button type="button" class="q-btn" data-target="wallToFohInput" data-val="12">12 ft</button>
+            <button type="button" class="q-btn" data-target="wallToFohInput" data-val="18">18 ft</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top: 12px;">
+        <label>Rear Wall Surface Type (Acoustic Absorption)</label>
+        <div class="input-wrap">
+          <select id="wallSurfaceSelect">
+            <option value="hard">Hard Drywall / Concrete / Brick / Glass (High Reflection)</option>
+            <option value="wood">Wood Paneling / Wainscoting (Moderate Reflection)</option>
+            <option value="curtain">Heavy Stage Curtain / Acoustic Treatment (Low Bleed)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Preloaded Internal DSP Latencies -->
+  <details>
+    <summary>Preloaded Speaker DSP Latencies (Tap to View / Edit)</summary>
+    <div class="input-grid">
+      <div class="field">
+        <label>Bose S1 Pro / Pro+ Internal DSP (Direct)</label>
+        <div class="input-wrap">
+          <input type="number" id="mainsDspInput" value="2.30" min="0" step="0.05">
+          <span>ms</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Mackie ThumpSub GO Internal DSP (Rated)</label>
+        <div class="input-wrap">
+          <input type="number" id="subDspInput" value="1.42" min="0" step="0.02">
+          <span>ms</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Hisonic Center Fill Internal DSP (Analog)</label>
+        <div class="input-wrap">
+          <input type="number" id="fillDspInput" value="0.00" min="0" step="0.05">
+          <span>ms</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Bose S1 Pro (#2) Stage Monitor DSP</label>
+        <div class="input-wrap">
+          <input type="number" id="monDspInput" value="2.30" min="0" step="0.05">
+          <span>ms</span>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <footer>
+    Offline Stage Utility &bull; Matches FOH Time Alignment &amp; DSP Reference Guide (CX2310 + Rane AD 22d)
+  </footer>
+</div>
+
+<script>
+  const state = {
+    unit: 'ft',
+    tempF: 70
+  };
+
+  const FT_PER_M = 3.280839895;
+
+  function getSpeed() {
+    const tempC = (state.tempF - 32) * (5 / 9);
+    const mps = 331.3 + (0.606 * tempC);
+    return state.unit === 'ft' ? mps * FT_PER_M : mps;
+  }
+
+  function calculate() {
+    const tempC = (state.tempF - 32) * (5 / 9);
+    const speed = getSpeed();
+
+    document.getElementById('tempDisplay').textContent = `${Math.round(state.tempF)}°F (${tempC.toFixed(1)}°C)`;
+    document.getElementById('speedDisplay').textContent = state.unit === 'ft'
+      ? `${speed.toFixed(1)} ft/s`
+      : `${speed.toFixed(1)} m/s`;
+
+    document.querySelectorAll('.unit-lbl').forEach(el => {
+      el.textContent = state.unit;
+    });
+
+    const mainsSetback = parseFloat(document.getElementById('mainsSetbackInput').value) || 0;
+    const subSetback = parseFloat(document.getElementById('subSetbackInput').value) || 0;
+    const mainsDsp = parseFloat(document.getElementById('mainsDspInput').value) || 0;
+    const subDsp = parseFloat(document.getElementById('subDspInput').value) || 0;
+
+    // Setback behind front reference plane ADDS air propagation time
+    const mainsArrival = mainsDsp + ((mainsSetback / speed) * 1000);
+    const subArrival = subDsp + ((subSetback / speed) * 1000);
+
+    // Rane Channel 1 -> Mackie ThumpSub GO (aligned to direct Bose S1 mains)
+    const subDelayNeeded = mainsArrival - subArrival;
+    const ch1Box = document.getElementById('ch1Box');
+    const ch1Val = document.getElementById('ch1Val');
+    const ch1Desc = document.getElementById('ch1Desc');
+
+    if (Math.abs(subDelayNeeded) <= 0.15) {
+      ch1Box.className = 'ch-box bypass-box';
+      ch1Val.textContent = '0.00 ms';
+      ch1Desc.textContent = `Locked (${subArrival.toFixed(2)} ms vs ${mainsArrival.toFixed(2)} ms S1s) — Rane Bypass`;
+    } else if (subDelayNeeded > 0.15) {
+      ch1Box.className = 'ch-box active-delay';
+      ch1Val.textContent = `${subDelayNeeded.toFixed(2)} ms`;
+      ch1Desc.textContent = `Sub arrives early (${subArrival.toFixed(2)} ms) — dial ${subDelayNeeded.toFixed(2)} ms on Rane Ch 1`;
+    } else {
+      ch1Box.className = 'ch-box bypass-box';
+      ch1Val.textContent = '0.00 ms';
+      ch1Desc.textContent = `Sub is ${Math.abs(subDelayNeeded).toFixed(2)} ms behind S1s — leave Ch 1 in Bypass`;
+    }
+
+    // Optional Hisonic Center Fill -> Rane Channel 2
+    const useFill = document.getElementById('useFillToggle').checked;
+    const fillInputs = document.getElementById('fillInputs');
+    const ch2Box = document.getElementById('ch2Box');
+
+    fillInputs.classList.toggle('hidden', !useFill);
+    ch2Box.classList.toggle('hidden', !useFill);
+
+    if (useFill) {
+      const fillSetback = parseFloat(document.getElementById('fillSetbackInput').value) || 0;
+      const fillDsp = parseFloat(document.getElementById('fillDspInput').value) || 0;
+      const fillArrival = fillDsp + ((fillSetback / speed) * 1000);
+      const fillDelayNeeded = mainsArrival - fillArrival;
+
+      const ch2Val = document.getElementById('ch2Val');
+      const ch2Desc = document.getElementById('ch2Desc');
+
+      if (Math.abs(fillDelayNeeded) <= 0.15) {
+        ch2Val.textContent = '0.00 ms';
+        ch2Desc.textContent = `Aligned (${fillArrival.toFixed(2)} ms vs ${mainsArrival.toFixed(2)} ms S1s) — Rane Ch 2 Bypass`;
+      } else if (fillDelayNeeded > 0.15) {
+        ch2Val.textContent = `${fillDelayNeeded.toFixed(2)} ms`;
+        ch2Desc.textContent = `Fill arrives at ${fillArrival.toFixed(2)} ms (${fillDelayNeeded.toFixed(2)} ms ahead of S1s) — dial on Ch 2 or run direct for subtle Haas center anchor`;
+      } else {
+        ch2Val.textContent = '0.00 ms';
+        ch2Desc.textContent = `Fill is ${Math.abs(fillDelayNeeded).toFixed(2)} ms behind S1s — leave Ch 2 in Bypass`;
+      }
+    }
+
+    // Stage Monitor (#2) Back-Wall Bleed Calculation
+    const useMon = document.getElementById('useMonitorToggle').checked;
+    const monitorInputs = document.getElementById('monitorInputs');
+    const monitorReadoutBox = document.getElementById('monitorReadoutBox');
+
+    monitorInputs.classList.toggle('hidden', !useMon);
+    monitorReadoutBox.classList.toggle('hidden', !useMon);
+
+    if (useMon) {
+      const monToWall = parseFloat(document.getElementById('monToWallInput').value) || 0;
+      const wallToFoh = parseFloat(document.getElementById('wallToFohInput').value) || 0;
+      const monDsp = parseFloat(document.getElementById('monDspInput').value) || 0;
+      const surface = document.getElementById('wallSurfaceSelect').value;
+
+      const totalBounceDist = monToWall + wallToFoh;
+      const monBounceArrival = monDsp + ((totalBounceDist / speed) * 1000);
+      const delayBehindMains = monBounceArrival - mainsArrival;
+
+      document.getElementById('monPathOut').textContent = `${totalBounceDist.toFixed(1)} ${state.unit}`;
+      document.getElementById('monArrivalOut').textContent = `${monBounceArrival.toFixed(2)} ms`;
+      document.getElementById('monOffsetOut').textContent = `${delayBehindMains >= 0 ? '+' : ''}${delayBehindMains.toFixed(2)} ms`;
+
+      const firstNullHz = delayBehindMains > 0.5 ? Math.round(500 / delayBehindMains) : 0;
+      const firstPeakHz = delayBehindMains > 0.5 ? Math.round(1000 / delayBehindMains) : 0;
+
+      let advice = '';
+      if (surface === 'curtain') {
+        advice = `Heavy curtain absorbs highs/mids; only low-end wraparound (<250 Hz) leaks into FOH (+${delayBehindMains.toFixed(1)} ms). Safe to use monitor warmth as part of your FOH low-mid body without vocal comb filtering.`;
+      } else if (delayBehindMains <= 6.0) {
+        advice = `Tight back-wall bounce (+${delayBehindMains.toFixed(1)} ms): reinforces warmth below ~${firstNullHz || 150} Hz, with first vocal cancellation notch around ${firstNullHz} Hz. Keep monitor high-mid vocal brightness moderate so FOH stays crisp.`;
+      } else if (delayBehindMains <= 18.0) {
+        advice = `Mid-delay bounce (+${delayBehindMains.toFixed(1)} ms): reinforces low-mids (120–250 Hz), while creating comb-filter notches every ${firstPeakHz} Hz starting at ${firstNullHz} Hz. Roll off highs slightly on Monitor #2 (or engage ToneMatch vocal warmth) to keep full FOH body without hollow vocal phasing.`;
+      } else {
+        advice = `Long stage reflection (+${delayBehindMains.toFixed(1)} ms): arrives late enough to act as natural room ambience/slapback rather than phase cancellation. Keep Monitor #2 level controlled so vocals stay tight up front.`;
+      }
+
+      document.getElementById('monAdviceOut').textContent = advice;
+    }
+  }
+
+  document.getElementById('tempSlider').addEventListener('input', e => {
+    state.tempF = parseFloat(e.target.value);
+    calculate();
+  });
+
+  document.getElementById('unitToggle').addEventListener('click', e => {
+    if (e.target.tagName !== 'BUTTON') return;
+    const newUnit = e.target.dataset.unit;
+    if (newUnit === state.unit) return;
+
+    const factor = newUnit === 'm' ? (1 / FT_PER_M) : FT_PER_M;
+    ['mainsSetbackInput', 'subSetbackInput', 'fillSetbackInput', 'monToWallInput', 'wallToFohInput'].forEach(id => {
+      const el = document.getElementById(id);
+      el.value = (parseFloat(el.value || 0) * factor).toFixed(2);
+    });
+
+    state.unit = newUnit;
+    document.querySelectorAll('#unitToggle button').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    calculate();
+  });
+
+  document.querySelectorAll('.q-btn[data-target]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      if (target) {
+        target.value = btn.dataset.val;
+        calculate();
+      }
+    });
+  });
+
+  document.getElementById('organicPresetBtn').addEventListener('click', () => {
+    document.getElementById('mainsSetbackInput').value = 0;
+    document.getElementById('subSetbackInput').value = state.unit === 'ft' ? 1 : 0.30;
+    document.getElementById('fillSetbackInput').value = state.unit === 'ft' ? 2 : 0.61;
+    calculate();
+  });
+
+  document.getElementById('fillFlushBtn').addEventListener('click', () => {
+    document.getElementById('fillSetbackInput').value = 0;
+    calculate();
+  });
+
+  document.getElementById('fillRearCradleBtn').addEventListener('click', () => {
+    const subVal = parseFloat(document.getElementById('subSetbackInput').value) || 0;
+    const step = state.unit === 'ft' ? 1 : 0.30;
+    document.getElementById('fillSetbackInput').value = (subVal + step).toFixed(2);
+    calculate();
+  });
+
+  ['mainsSetbackInput', 'subSetbackInput', 'fillSetbackInput',
+   'monToWallInput', 'wallToFohInput',
+   'mainsDspInput', 'subDspInput', 'fillDspInput', 'monDspInput'].forEach(id => {
+    document.getElementById(id).addEventListener('input', calculate);
+  });
+
+  document.getElementById('wallSurfaceSelect').addEventListener('change', calculate);
+  document.getElementById('useFillToggle').addEventListener('change', calculate);
+  document.getElementById('useMonitorToggle').addEventListener('change', calculate);
+
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    const ch1 = document.getElementById('ch1Val').textContent;
+    const subPos = document.getElementById('subSetbackInput').value;
+    let text = `Rane AD 22d Settings (S1 Mains Direct @ ${Math.round(state.tempF)}°F):\n• Ch 1 (ThumpSub GO @ ${subPos}${state.unit} back): ${ch1}`;
+    if (document.getElementById('useFillToggle').checked) {
+      const ch2 = document.getElementById('ch2Val').textContent;
+      const fillPos = document.getElementById('fillSetbackInput').value;
+      text += `\n• Ch 2 (Hisonic Fill @ ${fillPos}${state.unit} back): ${ch2}`;
+    }
+    if (document.getElementById('useMonitorToggle').checked) {
+      const monOffset = document.getElementById('monOffsetOut').textContent;
+      const monPath = document.getElementById('monPathOut').textContent;
+      text += `\n• Monitor #2 Bleed (${monPath} bounce): ${monOffset} behind S1 mains`;
+    }
+    navigator.clipboard?.writeText(text);
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy Settings'; }, 1400);
+  });
+
+  calculate();
+</script>
+</body>
+</html>
