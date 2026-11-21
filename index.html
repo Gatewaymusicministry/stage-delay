@@ -40,7 +40,7 @@
   }
 
   .container {
-    max-width: 800px;
+    max-width: 820px;
     margin: 0 auto;
   }
 
@@ -259,6 +259,7 @@
   }
 
   .ch-box.fill-box {
+    grid-column: 1 / -1;
     border-color: var(--accent-amber);
     background: rgba(245, 158, 11, 0.06);
   }
@@ -322,6 +323,17 @@
     line-height: 1.45;
   }
 
+  .routing-banner {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: rgba(6, 182, 212, 0.08);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    border-radius: 9px;
+    font-size: 0.76rem;
+    color: #cffafe;
+    line-height: 1.45;
+  }
+
   .mon-metrics {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -370,7 +382,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     flex-wrap: wrap;
   }
 
@@ -386,6 +398,12 @@
     margin-bottom: 14px;
   }
 
+  .preset-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
   .preset-pill-btn {
     background: rgba(16, 185, 129, 0.14);
     border: 1px solid rgba(16, 185, 129, 0.45);
@@ -395,6 +413,12 @@
     font-size: 0.74rem;
     font-weight: 700;
     cursor: pointer;
+  }
+
+  .preset-pill-btn.church-btn {
+    background: rgba(6, 182, 212, 0.14);
+    border-color: rgba(6, 182, 212, 0.45);
+    color: var(--accent-cyan);
   }
 
   .input-grid {
@@ -599,7 +623,7 @@
     </div>
     <div class="toggle-pill" id="unitToggle">
       <button type="button" class="active" data-unit="ft">Feet</button>
-      <button type="button" data-unit="m">Meters</button>
+      <button type="button" class="button" data-unit="m">Meters</button>
     </div>
   </header>
 
@@ -622,21 +646,27 @@
   <section class="rane-card">
     <div class="rane-header">
       <div>
-        <div class="rane-title">Rane AD 22d Settings (S1 Mains Direct)</div>
-        <div class="rane-sub" id="summaryNote">Keep Bose S1 Pro / Pro+ mains direct (~2.30 ms); dial Rane Ch 1 &amp; Ch 2 below</div>
+        <div class="rane-title">Rane AD 22d Time Alignment Readout</div>
+        <div class="rane-sub" id="summaryNote">Automatically aligns whichever zone arrives early to the latest acoustic plane</div>
       </div>
       <button type="button" class="copy-btn" id="copyBtn">Copy Settings</button>
     </div>
 
     <div class="channel-grid">
-      <div class="ch-box" id="ch1Box">
-        <div class="ch-tag">Rane Channel 1 — Mackie ThumpSub GO</div>
-        <div class="ch-readout" id="ch1Val">0.00 ms</div>
-        <div class="ch-desc" id="ch1Desc">Setback absorbs DSP — Rane Bypass / 0.00 ms</div>
+      <div class="ch-box" id="fohBox">
+        <div class="ch-tag">Bose S1 Pro / Pro+ FOH Mains</div>
+        <div class="ch-readout" id="fohVal">0.00 ms</div>
+        <div class="ch-desc" id="fohDesc">Anchor plane (2.30 ms total) — Direct / Bypass</div>
+      </div>
+
+      <div class="ch-box" id="subBox">
+        <div class="ch-tag">Mackie ThumpSub GO</div>
+        <div class="ch-readout" id="subVal">0.00 ms</div>
+        <div class="ch-desc" id="subDesc">Setback absorbs DSP — Rane Bypass / 0.00 ms</div>
       </div>
 
       <div class="ch-box fill-box hidden" id="ch2Box">
-        <div class="ch-tag">Rane Channel 2 — Hisonic Center Fill</div>
+        <div class="ch-tag">Hisonic Center Fill</div>
         <div class="ch-readout" id="ch2Val">0.53 ms</div>
         <div class="ch-desc" id="ch2Desc">24" behind S1s — 0.53 ms Haas anchor (or Bypass)</div>
       </div>
@@ -653,43 +683,52 @@
             <strong id="monArrivalOut">14.71 ms</strong>
           </div>
           <div class="mon-stat">
-            <span>Delay Behind S1 Mains</span>
+            <span>Delay Behind FOH Anchor</span>
             <strong id="monOffsetOut">+12.41 ms</strong>
           </div>
         </div>
         <div class="ch-desc" id="monAdviceOut">Calculating comb-filtering &amp; low-mid reinforcement impact...</div>
       </div>
     </div>
+
+    <div class="routing-banner" id="routingBanner">
+      <strong>Patch Tip:</strong> S1 Mains sit forward — run S1 Mains direct and patch <strong>ThumpSub GO → Rane Ch 1</strong> (and Hisonic → Rane Ch 2 if used).
+    </div>
   </section>
 
-  <!-- STEP 1: Setback Behind S1 Grille Plane -->
+  <!-- STEP 1: Speaker Depth Setback From Front-Most Plane -->
   <section class="panel-card">
     <div class="panel-header-row">
-      <div class="panel-title">1. Distance Behind Bose S1 Grille Plane (Setback)</div>
-      <button type="button" class="preset-pill-btn" id="organicPresetBtn">Load Organic 1 ft / 2 ft Preset</button>
+      <div class="panel-title">1. Speaker Depth Behind Front-Most Line (0 ft = Closest to Audience)</div>
+      <div class="preset-group">
+        <button type="button" class="preset-pill-btn" id="organicPresetBtn">Organic 1 ft / 2 ft</button>
+        <button type="button" class="preset-pill-btn church-btn" id="churchPlatformBtn">Church Platform (Sub Floor / FOH +4 ft)</button>
+      </div>
     </div>
-    <div class="panel-hint">Bose S1 Pro / Pro+ mains sit at <code>0 ft</code> (Front Reference Plane). Enter how far <strong>behind</strong> the S1 grille line each speaker sits (use negative numbers like <code>-2</code> if a speaker is forced in front of the S1s).</div>
+    <div class="panel-hint">Set whichever speaker is closest to the audience at <code>0 ft</code>, and enter how many feet <strong>further back on stage/platform</strong> the other speaker sits.</div>
 
     <div class="input-grid">
       <div class="field">
-        <label>Bose S1 Pro / Pro+ Mains (Reference Plane)</label>
+        <label>Bose S1 Pro / Pro+ FOH Mains Depth</label>
         <div class="input-wrap">
           <input type="number" id="mainsSetbackInput" value="0" step="0.25">
           <span class="unit-lbl">ft</span>
         </div>
         <div class="quick-btns">
-          <button type="button" class="q-btn" data-target="mainsSetbackInput" data-val="0">0 ft (Front Anchor)</button>
+          <button type="button" class="q-btn" data-target="mainsSetbackInput" data-val="0">0 ft (Front Line)</button>
+          <button type="button" class="q-btn" data-target="mainsSetbackInput" data-val="4">4.0 ft Behind Sub</button>
+          <button type="button" class="q-btn" data-target="mainsSetbackInput" data-val="5">5.0 ft Behind Sub</button>
         </div>
       </div>
 
       <div class="field">
-        <label>Mackie ThumpSub GO (Setback Behind S1s)</label>
+        <label>Mackie ThumpSub GO Depth</label>
         <div class="input-wrap">
           <input type="number" id="subSetbackInput" value="1" step="0.25">
           <span class="unit-lbl">ft</span>
         </div>
         <div class="quick-btns">
-          <button type="button" class="q-btn" data-target="subSetbackInput" data-val="0">0 ft (Grilles Flush)</button>
+          <button type="button" class="q-btn" data-target="subSetbackInput" data-val="0">0 ft (On Floor / Front)</button>
           <button type="button" class="q-btn" data-target="subSetbackInput" data-val="1">1.0 ft Behind S1s</button>
           <button type="button" class="q-btn" data-target="subSetbackInput" data-val="2">2.0 ft Behind S1s</button>
         </div>
@@ -702,7 +741,7 @@
     <div class="fill-toggle-bar">
       <div>
         <div class="panel-title" style="margin-bottom: 2px;">2. Using the Hisonic Center Fill Today?</div>
-        <div class="panel-hint" style="margin-bottom: 0;">Turn on when deploying the Hisonic center fill (on rear sub cradle or stage lip)</div>
+        <div class="panel-hint" style="margin-bottom: 0;">Turn on when deploying the Hisonic center fill (on floor sub, platform lip, or rear cradle)</div>
       </div>
       <label class="switch">
         <input type="checkbox" id="useFillToggle">
@@ -712,14 +751,15 @@
 
     <div class="fill-inputs hidden" id="fillInputs">
       <div class="field">
-        <label>Hisonic Center Fill Setback Behind S1 Grille Plane</label>
+        <label>Hisonic Center Fill Depth Behind Front-Most Line</label>
         <div class="input-wrap">
           <input type="number" id="fillSetbackInput" value="2" step="0.25">
           <span class="unit-lbl">ft</span>
         </div>
         <div class="quick-btns">
-          <button type="button" class="q-btn" id="fillFlushBtn">0 ft (Flush w/ S1s)</button>
+          <button type="button" class="q-btn" id="fillFrontBtn">0 ft (Front Floor w/ Sub)</button>
           <button type="button" class="q-btn" id="fillRearCradleBtn">Rear Sub Cradle (+1 ft behind Sub)</button>
+          <button type="button" class="q-btn" id="fillWithFohBtn">Even w/ S1 FOH Mains</button>
         </div>
       </div>
     </div>
@@ -754,7 +794,7 @@
         </div>
 
         <div class="field">
-          <label>Back Wall to S1 FOH Front Line</label>
+          <label>Back Wall to Front-Most FOH/Sub Line</label>
           <div class="input-wrap">
             <input type="number" id="wallToFohInput" value="10" min="0" step="0.5">
             <span class="unit-lbl">ft</span>
@@ -816,7 +856,7 @@
   </details>
 
   <footer>
-    Offline Stage Utility &bull; Matches FOH Time Alignment &amp; DSP Reference Guide (CX2310 + Rane AD 22d)
+    Offline Stage Utility &bull; Supports Forward-FOH &amp; Church Platform Setups (CX2310 + Rane AD 22d)
   </footer>
 </div>
 
@@ -852,31 +892,55 @@
     const mainsDsp = parseFloat(document.getElementById('mainsDspInput').value) || 0;
     const subDsp = parseFloat(document.getElementById('subDspInput').value) || 0;
 
-    // Setback behind front reference plane ADDS air propagation time
+    // Total acoustic arrival time relative to front-most line (0 ft)
     const mainsArrival = mainsDsp + ((mainsSetback / speed) * 1000);
     const subArrival = subDsp + ((subSetback / speed) * 1000);
 
-    // Rane Channel 1 -> Mackie ThumpSub GO (aligned to direct Bose S1 mains)
-    const subDelayNeeded = mainsArrival - subArrival;
-    const ch1Box = document.getElementById('ch1Box');
-    const ch1Val = document.getElementById('ch1Val');
-    const ch1Desc = document.getElementById('ch1Desc');
+    // Latest between FOH Mains and Sub becomes the primary alignment anchor
+    const primaryAnchor = Math.max(mainsArrival, subArrival);
 
-    if (Math.abs(subDelayNeeded) <= 0.15) {
-      ch1Box.className = 'ch-box bypass-box';
-      ch1Val.textContent = '0.00 ms';
-      ch1Desc.textContent = `Locked (${subArrival.toFixed(2)} ms vs ${mainsArrival.toFixed(2)} ms S1s) — Rane Bypass`;
-    } else if (subDelayNeeded > 0.15) {
-      ch1Box.className = 'ch-box active-delay';
-      ch1Val.textContent = `${subDelayNeeded.toFixed(2)} ms`;
-      ch1Desc.textContent = `Sub arrives early (${subArrival.toFixed(2)} ms) — dial ${subDelayNeeded.toFixed(2)} ms on Rane Ch 1`;
+    const fohDelayNeeded = primaryAnchor - mainsArrival;
+    const subDelayNeeded = primaryAnchor - subArrival;
+
+    const fohBox = document.getElementById('fohBox');
+    const fohVal = document.getElementById('fohVal');
+    const fohDesc = document.getElementById('fohDesc');
+
+    const subBox = document.getElementById('subBox');
+    const subVal = document.getElementById('subVal');
+    const subDesc = document.getElementById('subDesc');
+
+    // Update FOH Mains Readout
+    if (fohDelayNeeded <= 0.15) {
+      fohBox.className = 'ch-box bypass-box';
+      fohVal.textContent = '0.00 ms';
+      if (Math.abs(mainsArrival - subArrival) <= 0.15) {
+        fohDesc.textContent = `Locked w/ Sub (${mainsArrival.toFixed(2)} ms) — Direct / Bypass`;
+      } else {
+        fohDesc.textContent = `Latest plane (${mainsArrival.toFixed(2)} ms anchor) — Run Direct / Bypass`;
+      }
     } else {
-      ch1Box.className = 'ch-box bypass-box';
-      ch1Val.textContent = '0.00 ms';
-      ch1Desc.textContent = `Sub is ${Math.abs(subDelayNeeded).toFixed(2)} ms behind S1s — leave Ch 1 in Bypass`;
+      fohBox.className = 'ch-box active-delay';
+      fohVal.textContent = `${fohDelayNeeded.toFixed(2)} ms`;
+      fohDesc.textContent = `FOH arrives ${fohDelayNeeded.toFixed(2)} ms ahead of Sub (${mainsArrival.toFixed(2)} ms vs ${subArrival.toFixed(2)} ms) — Dial on Rane`;
     }
 
-    // Optional Hisonic Center Fill -> Rane Channel 2
+    // Update Sub Readout
+    if (subDelayNeeded <= 0.15) {
+      subBox.className = 'ch-box bypass-box';
+      subVal.textContent = '0.00 ms';
+      if (Math.abs(mainsArrival - subArrival) <= 0.15) {
+        subDesc.textContent = `Locked w/ FOH (${subArrival.toFixed(2)} ms) — Direct / Bypass`;
+      } else {
+        subDesc.textContent = `Latest plane (${subArrival.toFixed(2)} ms anchor) — Run Direct / Bypass`;
+      }
+    } else {
+      subBox.className = 'ch-box active-delay';
+      subVal.textContent = `${subDelayNeeded.toFixed(2)} ms`;
+      subDesc.textContent = `Sub arrives ${subDelayNeeded.toFixed(2)} ms ahead of FOH (${subArrival.toFixed(2)} ms vs ${mainsArrival.toFixed(2)} ms) — Dial on Rane`;
+    }
+
+    // Optional Hisonic Center Fill
     const useFill = document.getElementById('useFillToggle').checked;
     const fillInputs = document.getElementById('fillInputs');
     const ch2Box = document.getElementById('ch2Box');
@@ -884,25 +948,36 @@
     fillInputs.classList.toggle('hidden', !useFill);
     ch2Box.classList.toggle('hidden', !useFill);
 
+    let fillDelayNeeded = 0;
     if (useFill) {
       const fillSetback = parseFloat(document.getElementById('fillSetbackInput').value) || 0;
       const fillDsp = parseFloat(document.getElementById('fillDspInput').value) || 0;
       const fillArrival = fillDsp + ((fillSetback / speed) * 1000);
-      const fillDelayNeeded = mainsArrival - fillArrival;
+      fillDelayNeeded = primaryAnchor - fillArrival;
 
       const ch2Val = document.getElementById('ch2Val');
       const ch2Desc = document.getElementById('ch2Desc');
 
       if (Math.abs(fillDelayNeeded) <= 0.15) {
         ch2Val.textContent = '0.00 ms';
-        ch2Desc.textContent = `Aligned (${fillArrival.toFixed(2)} ms vs ${mainsArrival.toFixed(2)} ms S1s) — Rane Ch 2 Bypass`;
+        ch2Desc.textContent = `Aligned (${fillArrival.toFixed(2)} ms vs ${primaryAnchor.toFixed(2)} ms anchor) — Direct / Bypass`;
       } else if (fillDelayNeeded > 0.15) {
         ch2Val.textContent = `${fillDelayNeeded.toFixed(2)} ms`;
-        ch2Desc.textContent = `Fill arrives at ${fillArrival.toFixed(2)} ms (${fillDelayNeeded.toFixed(2)} ms ahead of S1s) — dial on Ch 2 or run direct for subtle Haas center anchor`;
+        ch2Desc.textContent = `Fill arrives at ${fillArrival.toFixed(2)} ms (${fillDelayNeeded.toFixed(2)} ms ahead of ${primaryAnchor.toFixed(2)} ms anchor) — dial on Rane or run direct for early Haas anchor`;
       } else {
         ch2Val.textContent = '0.00 ms';
-        ch2Desc.textContent = `Fill is ${Math.abs(fillDelayNeeded).toFixed(2)} ms behind S1s — leave Ch 2 in Bypass`;
+        ch2Desc.textContent = `Fill is ${Math.abs(fillDelayNeeded).toFixed(2)} ms behind anchor — leave in Bypass`;
       }
+    }
+
+    // Smart Patch Tip Banner
+    const routingBanner = document.getElementById('routingBanner');
+    if (subDelayNeeded > 0.15 && fohDelayNeeded <= 0.15) {
+      routingBanner.innerHTML = `<strong>Church Platform Patch Tip:</strong> Because FOH is further back on the platform (${mainsArrival.toFixed(2)} ms), run <strong>Bose S1 Mains direct</strong> (or into CX2310 High Out) and patch <strong>ThumpSub GO → Rane Ch 1 (${subDelayNeeded.toFixed(2)} ms)</strong>${useFill && fillDelayNeeded > 0.15 ? ` and <strong>Hisonic Fill → Rane Ch 2 (${fillDelayNeeded.toFixed(2)} ms)</strong>` : ''}.`;
+    } else if (fohDelayNeeded > 0.15 && subDelayNeeded <= 0.15) {
+      routingBanner.innerHTML = `<strong>Patch Tip:</strong> Sub arrives later (${subArrival.toFixed(2)} ms) — run <strong>ThumpSub GO direct</strong> and patch <strong>Bose S1 Mains → Rane Ch 1 (${fohDelayNeeded.toFixed(2)} ms)</strong>${useFill && fillDelayNeeded > 0.15 ? ` and <strong>Hisonic Fill → Rane Ch 2 (${fillDelayNeeded.toFixed(2)} ms)</strong>` : ''}.`;
+    } else {
+      routingBanner.innerHTML = `<strong>Organic Alignment Locked:</strong> Both FOH Mains (${mainsArrival.toFixed(2)} ms) and ThumpSub GO (${subArrival.toFixed(2)} ms) arrive within 0.15 ms — <strong>Rane AD 22d can stay in BYPASS</strong>.`;
     }
 
     // Stage Monitor (#2) Back-Wall Bleed Calculation
@@ -921,24 +996,24 @@
 
       const totalBounceDist = monToWall + wallToFoh;
       const monBounceArrival = monDsp + ((totalBounceDist / speed) * 1000);
-      const delayBehindMains = monBounceArrival - mainsArrival;
+      const delayBehindAnchor = monBounceArrival - primaryAnchor;
 
       document.getElementById('monPathOut').textContent = `${totalBounceDist.toFixed(1)} ${state.unit}`;
       document.getElementById('monArrivalOut').textContent = `${monBounceArrival.toFixed(2)} ms`;
-      document.getElementById('monOffsetOut').textContent = `${delayBehindMains >= 0 ? '+' : ''}${delayBehindMains.toFixed(2)} ms`;
+      document.getElementById('monOffsetOut').textContent = `${delayBehindAnchor >= 0 ? '+' : ''}${delayBehindAnchor.toFixed(2)} ms`;
 
-      const firstNullHz = delayBehindMains > 0.5 ? Math.round(500 / delayBehindMains) : 0;
-      const firstPeakHz = delayBehindMains > 0.5 ? Math.round(1000 / delayBehindMains) : 0;
+      const firstNullHz = delayBehindAnchor > 0.5 ? Math.round(500 / delayBehindAnchor) : 0;
+      const firstPeakHz = delayBehindAnchor > 0.5 ? Math.round(1000 / delayBehindAnchor) : 0;
 
       let advice = '';
       if (surface === 'curtain') {
-        advice = `Heavy curtain absorbs highs/mids; only low-end wraparound (<250 Hz) leaks into FOH (+${delayBehindMains.toFixed(1)} ms). Safe to use monitor warmth as part of your FOH low-mid body without vocal comb filtering.`;
-      } else if (delayBehindMains <= 6.0) {
-        advice = `Tight back-wall bounce (+${delayBehindMains.toFixed(1)} ms): reinforces warmth below ~${firstNullHz || 150} Hz, with first vocal cancellation notch around ${firstNullHz} Hz. Keep monitor high-mid vocal brightness moderate so FOH stays crisp.`;
-      } else if (delayBehindMains <= 18.0) {
-        advice = `Mid-delay bounce (+${delayBehindMains.toFixed(1)} ms): reinforces low-mids (120–250 Hz), while creating comb-filter notches every ${firstPeakHz} Hz starting at ${firstNullHz} Hz. Roll off highs slightly on Monitor #2 (or engage ToneMatch vocal warmth) to keep full FOH body without hollow vocal phasing.`;
+        advice = `Heavy curtain absorbs highs/mids; only low-end wraparound (<250 Hz) leaks into FOH (+${delayBehindAnchor.toFixed(1)} ms). Safe to use monitor warmth as part of your FOH low-mid body without vocal comb filtering.`;
+      } else if (delayBehindAnchor <= 6.0) {
+        advice = `Tight back-wall bounce (+${delayBehindAnchor.toFixed(1)} ms): reinforces warmth below ~${firstNullHz || 150} Hz, with first vocal cancellation notch around ${firstNullHz} Hz. Keep monitor high-mid vocal brightness moderate so FOH stays crisp.`;
+      } else if (delayBehindAnchor <= 18.0) {
+        advice = `Mid-delay bounce (+${delayBehindAnchor.toFixed(1)} ms): reinforces low-mids (120–250 Hz), while creating comb-filter notches every ${firstPeakHz} Hz starting at ${firstNullHz} Hz. Roll off highs slightly on Monitor #2 (or engage ToneMatch vocal warmth) to keep full FOH body without hollow vocal phasing.`;
       } else {
-        advice = `Long stage reflection (+${delayBehindMains.toFixed(1)} ms): arrives late enough to act as natural room ambience/slapback rather than phase cancellation. Keep Monitor #2 level controlled so vocals stay tight up front.`;
+        advice = `Long stage reflection (+${delayBehindAnchor.toFixed(1)} ms): arrives late enough to act as natural room ambience/slapback rather than phase cancellation. Keep Monitor #2 level controlled so vocals stay tight up front.`;
       }
 
       document.getElementById('monAdviceOut').textContent = advice;
@@ -984,7 +1059,14 @@
     calculate();
   });
 
-  document.getElementById('fillFlushBtn').addEventListener('click', () => {
+  document.getElementById('churchPlatformBtn').addEventListener('click', () => {
+    document.getElementById('subSetbackInput').value = 0;
+    document.getElementById('mainsSetbackInput').value = state.unit === 'ft' ? 4 : 1.22;
+    document.getElementById('fillSetbackInput').value = state.unit === 'ft' ? 4 : 1.22;
+    calculate();
+  });
+
+  document.getElementById('fillFrontBtn').addEventListener('click', () => {
     document.getElementById('fillSetbackInput').value = 0;
     calculate();
   });
@@ -993,6 +1075,12 @@
     const subVal = parseFloat(document.getElementById('subSetbackInput').value) || 0;
     const step = state.unit === 'ft' ? 1 : 0.30;
     document.getElementById('fillSetbackInput').value = (subVal + step).toFixed(2);
+    calculate();
+  });
+
+  document.getElementById('fillWithFohBtn').addEventListener('click', () => {
+    const fohVal = parseFloat(document.getElementById('mainsSetbackInput').value) || 0;
+    document.getElementById('fillSetbackInput').value = fohVal.toFixed(2);
     calculate();
   });
 
@@ -1007,18 +1095,20 @@
   document.getElementById('useMonitorToggle').addEventListener('change', calculate);
 
   document.getElementById('copyBtn').addEventListener('click', () => {
-    const ch1 = document.getElementById('ch1Val').textContent;
+    const fohDelay = document.getElementById('fohVal').textContent;
+    const fohPos = document.getElementById('mainsSetbackInput').value;
+    const subDelay = document.getElementById('subVal').textContent;
     const subPos = document.getElementById('subSetbackInput').value;
-    let text = `Rane AD 22d Settings (S1 Mains Direct @ ${Math.round(state.tempF)}°F):\n• Ch 1 (ThumpSub GO @ ${subPos}${state.unit} back): ${ch1}`;
+    let text = `Rane AD 22d Settings (@ ${Math.round(state.tempF)}°F):\n• Bose S1 FOH Mains (@ ${fohPos}${state.unit}): ${fohDelay}\n• Mackie ThumpSub GO (@ ${subPos}${state.unit}): ${subDelay}`;
     if (document.getElementById('useFillToggle').checked) {
       const ch2 = document.getElementById('ch2Val').textContent;
       const fillPos = document.getElementById('fillSetbackInput').value;
-      text += `\n• Ch 2 (Hisonic Fill @ ${fillPos}${state.unit} back): ${ch2}`;
+      text += `\n• Hisonic Center Fill (@ ${fillPos}${state.unit}): ${ch2}`;
     }
     if (document.getElementById('useMonitorToggle').checked) {
       const monOffset = document.getElementById('monOffsetOut').textContent;
       const monPath = document.getElementById('monPathOut').textContent;
-      text += `\n• Monitor #2 Bleed (${monPath} bounce): ${monOffset} behind S1 mains`;
+      text += `\n• Monitor #2 Bleed (${monPath} bounce): ${monOffset} behind anchor`;
     }
     navigator.clipboard?.writeText(text);
     const btn = document.getElementById('copyBtn');
