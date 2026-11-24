@@ -1054,7 +1054,7 @@
 
   document.getElementById('organicPresetBtn').addEventListener('click', () => {
     document.getElementById('mainsSetbackInput').value = 0;
-    document.getElementById('subSetbackInput').value = state.unit === 'ft' ? 1 : 0.30;
+    document.getElementById('subSetbackInput').value = 0;
     document.getElementById('fillSetbackInput').value = state.unit === 'ft' ? 2 : 0.61;
     calculate();
   });
